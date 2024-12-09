@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RTC Sensor and Pump Setting</title>
+  <style>
+    * { font-family: "Poppins", sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #dde5f4; padding: 1em; }
+    .container { background-color: #f1f7fe; padding: 2em; border-radius: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; width: 100%; max-width: 400px; justify-content: space-between; }
+    .section { width: 100%; text-align: center; }
+    .sensor-value, .time-setting { background: white; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); padding: 1em; margin-bottom: 1em; border-radius: 20px; display: flex; flex-direction: column; align-items: center; font-size: 1em; color: #3e4684; }
+    .refresh-btn, .login-btn, .set-time-btn { background-color: #3e4684; color: white; border: none; padding: 1em 2em; font-size: 1em; border-radius: 20px; cursor: pointer; transition: background-color 0.3s ease; margin: 0.5em 0; }
+    .refresh-btn:hover, .login-btn:hover, .set-time-btn:hover { background-color: #2c325f; }
+    .time-setting input { width: 100%; border: none; padding: 0.5em; margin: 0.5em 0; font-size: 1em; border-radius: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); outline: none; }
+    .time-setting label { margin-bottom: 0.5em; color: #3e4684; font-size: 1em; }
+    #prg {
+          margin-top: 0.5em;
+        }
+    @media (max-width: 600px) {
+      .container { padding: 1em; }
+      .sensor-value, .time-setting { font-size: 0.9em; }
+      .refresh-btn, .login-btn, .set-time-btn { padding: 0.8em 1.5em; font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="section">
+    <H2>Time Now</H2>
+    <br>
+    <div class="sensor-value" id="sensorValue">loading</div>
+    <H2>Reset Count</H2>
+    <br>
+    <div class="sensor-value" id="resetCount">loading</div>
+    <H2>Voltage Battery</H2>
+    <br>
+    <div class="sensor-value" id="voltageBat">loading</div>
+    <H2>Voltage PLN</H2>
+    <br>
+    <div class="sensor-value" id="voltageValue">loading</div>
+    <H2>Setting PLTS Time</H2>
+    <br>
+    <div class="time-setting">
+      <label for="pumpTimeOn">Set PLTS Time On (HH:MM):</label>
+      <input type="time" id="pumpTimeOn" name="pumpTimeOn">
+      <button class="set-time-btn" onclick="setPumpTime()">Set Time</button>
+    </div>
+    <div class="time-setting">
+      <label for="pumpTimeOff">Set PLTS Time Off (HH:MM):</label>
+      <input type="time" id="pumpTimeOff" name="pumpTimeOff">
+      <button class="set-time-btn" onclick="setPumpTimeOff()">Set Time</button>
+    </div>
+    <H2>Time Synchronization</H2>
+    <br>
+    <div class="time-setting">
+      <label for="dateTime">Set RTC Time On (D:M:Y HH:MM):</label>
+      <input type="datetime-local" id="dateTime" name="dateTime">
+      <button class="set-time-btn" onclick="setDate()">Set Time</button>
+    </div>
+    <H2>Update Firmware</H2>
+    <br>
+    <button class="login-btn" onclick="navigateToLogin()">Update Firmware</button>
+    <br>
+  </div>
+</div>
+<script>
+  function refreshSensorValue() {
+    fetch('/time')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('sensorValue').innerText = data.time;
+      })
+      .catch(error => console.error('Error:', error));
+
+      fetch('/voltage')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('voltageValue').innerText = data.voltage;
+      })
+      .catch(error => console.error('Error:', error));
+      
+      fetch('/voltageBat')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('voltageBat').innerText = data.voltageBat;
+      })
+      .catch(error => console.error('Error:', error));
+      
+      fetch('/resetCount')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('resetCount').innerText = data.resetCount;
+      })
+      .catch(error => console.error('Error:', error));
+  }
+
+  function navigateToLogin() {
+    window.location.href = '/upload.html';
+  }
+
+  function setPumpTime() {
+    var pumpTime = document.getElementById('pumpTimeOn').value;
+    if (pumpTime) {
+      fetch('/setPumpTime', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'pumpTime=' + encodeURIComponent(pumpTime)
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+      })
+      .catch(error => console.error('Error:', error));
+    } else {
+      alert('Please select a valid time.');
+    }
+  }
+
+  function setDate() {
+    var dateTime = document.getElementById('dateTime').value;
+    if (dateTime) {
+      fetch('/setDate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'dateTime=' + encodeURIComponent(dateTime)
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+      })
+      .catch(error => console.error('Error:', error));
+    } else {
+      alert('Please select a valid time.');
+    }
+  }
+
+  function setPumpTimeOff() {
+    var pumpTimeOff = document.getElementById('pumpTimeOff').value;
+    if (pumpTimeOff) {
+      fetch('/setPumpTimeOff', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'pumpTimeOff=' + encodeURIComponent(pumpTimeOff)
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert(data);
+      })
+      .catch(error => console.error('Error:', error));
+    } else {
+      alert('Please select a valid time.');
+    }
+  }
+
+  setInterval(refreshSensorValue, 1000);
+  window.onload = refreshSensorValue;
+</script>
+</body>
+</html>

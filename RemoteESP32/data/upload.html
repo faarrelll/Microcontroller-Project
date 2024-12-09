@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<table>
+<tr>
+
+<!-- <td><h1>OCN</td> -->
+</tr>
+</table>
+<head>
+    <title>ATS Firmware Update</title>
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+    <style>
+        * {
+          font-family: Poppins, sans-serif;
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+    
+        body {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          background-color: #dde5f4;
+        }
+    
+        .server-container {
+          background-color: #f1f7fe;
+          padding: 2em;
+          border-radius: 20px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          width: 300px;
+          text-align: center;
+        }
+    
+        .upload-form {
+          margin-bottom: 1em;
+        }
+    
+        .upload-btn {
+          background-color: #3e4684;
+          color: white;
+          border: none;
+          padding: 1em 2em;
+          font-size: 1em;
+          border-radius: 20px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+    
+        .upload-btn:hover {
+          background-color: #2c325f;
+        }
+    
+        .file-input {
+          margin-bottom: 0.5em; 
+        }
+    
+        .progress {
+          font-size: 0.8em;
+          color: #5e5e5e;
+          margin-top: 1em;
+        }
+    
+        #prg {
+          margin-top: 0.5em;
+        }
+        .password {
+        background: white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        border: none;
+        padding: 1em 3em;
+        font-size: 0.8em;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+       }
+      </style>
+</head>
+<body>
+    <div class=server-container>
+        <img src="avatar.png" width="150" height="96" alt="OneCircuit">
+        <BR></BR>
+    <H2>Firmware Update</H2>
+    <form action="/upload" method="post" enctype="multipart/form-data" class=upload-form id=upload_form>
+        <Br></Br>
+        <input type="password" placeholder="Password" name="password" class="password" required><br><br>
+        <input type="file" name="update" class=file-input accept=".bin" required><br><br>
+        <input type="submit" class=upload-btn value="Press to Update"><br><br>
+
+</form>
+        <div id=prg> <a href="/restart">Restart Cycle Reset Count</a></div>
+        <br>
+        <div id=prg><u><a href=\>back to dashboard</a></u> </div>
+    </div>
+</body>
+</html>
